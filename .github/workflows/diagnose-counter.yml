@@ -1,4 +1,4 @@
-name: Diagnose UGN Media Public Counter API
+name: Verify UGN Media Play Counter
 on:
   push:
     paths:
@@ -11,25 +11,34 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Probe replacement services without increasing counts
+      - name: Verify GET, HIT, GET with test-only counter key
         shell: bash
         run: |
           python3 - <<'PY'
-          import urllib.request, urllib.error, json, time
-          endpoints = {
-            "abacus": "https://abacus.jasoncameron.dev/get/ugn-media-play-tracking-v2/total",
-            "countapi": "https://countapi.mileshilliard.com/api/v1/get/ugn_media_dvd_20261118_total",
-            "countapi_health": "https://countapi.mileshilliard.com/health"
-          }
-          for name, url in endpoints.items():
-            start=time.monotonic()
-            req=urllib.request.Request(url, headers={"Origin":"https://universal-gaming.github.io", "User-Agent":"UGN-Media-Diagnostics/1.0"})
+          import urllib.request, urllib.error, json
+          import uuid
+          root = "https://countapi.mileshilliard.com/api/v1"
+          key = "ugn_media_probe_" + uuid.uuid4().hex[:18]
+          origin = "https://universal-gaming.github.io"
+          def check(operation):
+            req = urllib.request.Request(f"{root}/{operation}/{key}",headers={"Origin":origin,"User-Agent":"UGN Media test"})
             try:
-              with urllib.request.urlopen(req, timeout=9) as res:
-                body=res.read(600).decode("utf-8","replace")
-                print(json.dumps({"name":name,"status":res.status,"cors":res.headers.get("Access-Control-Allow-Origin"),"body":body,"latency_seconds":round(time.monotonic()-start,2)}))
+              with urllib.request.urlopen(req,timeout=12) as response:
+                body = response.read().decode("utf-8")
+                data = json.loads(body)
+                cors = response.headers.get("Access-Control-Allow-Origin")
+                print(json.dumps({"method":operation,"status":response.status,"cors":cors,"json":data}))
+                if cors not in (origin,"*"): raise AssertionError("CORS blocks GitHub Pages browsers")
+                return response.status, data
             except urllib.error.HTTPError as e:
-              print(json.dumps({"name":name,"status":e.code,"cors":e.headers.get("Access-Control-Allow-Origin"),"body":e.read(500).decode("utf-8","replace")}))
-            except Exception as e:
-              print(json.dumps({"name":name,"error":str(e)}))
+              body=e.read().decode("utf-8","replace")
+              print(json.dumps({"method":operation,"status":e.code,"body":body,"cors":e.headers.get("Access-Control-Allow-Origin")}))
+              return e.code, json.loads(body)
+          initial,_=check("get")
+          assert initial==404, "Expected new key to be missing before first play"
+          status,hit=check("hit")
+          assert status==200 and int(hit["value"])==1, "Play increment did not work"
+          status,read=check("get")
+          assert status==200 and int(read["value"])==1, "Read did not return saved play"
+          print("PASS: real service increment persists, read has no side effects, CORS allows Pages.")
           PY
