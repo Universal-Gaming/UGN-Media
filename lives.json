@@ -1,7 +1,78 @@
 {
   "channelId": "UCSZKqTk0dxDgN_krIsSa16Q",
   "channelUrl": "https://www.youtube.com/@_UniversalGaming/streams",
-  "lastSynced": null,
+  "lastSynced": "2026-11-18T11:22:19.020337+00:00",
   "maxFeatured": 10,
-  "lives": []
+  "lives": [
+    {
+      "id": "i4a8xABnDeI",
+      "title": "minecraft server  play.universalgaming.us 19132",
+      "description": "Archived livestream from Universal Gaming Network.",
+      "published": "",
+      "kind": "LIVE REPLAY"
+    },
+    {
+      "id": "zqtuqSqJYWg",
+      "title": "minecraft server  play.universalgaming.us 19132",
+      "description": "Archived livestream from Universal Gaming Network.",
+      "published": "",
+      "kind": "LIVE REPLAY"
+    },
+    {
+      "id": "noysKiC_Zl8",
+      "title": "minecraft server  play.universalgaming.us",
+      "description": "Archived livestream from Universal Gaming Network.",
+      "published": "",
+      "kind": "LIVE REPLAY"
+    },
+    {
+      "id": "h5Ya2eMW400",
+      "title": "minecraft server  play.universalgaming.us",
+      "description": "Archived livestream from Universal Gaming Network.",
+      "published": "",
+      "kind": "LIVE REPLAY"
+    },
+    {
+      "id": "QfOXaE_E50s",
+      "title": "Universal SMP  #Gaming #live #viral #trending #tiktok #like #comment #sub #music #chill",
+      "description": "Archived livestream from Universal Gaming Network.",
+      "published": "",
+      "kind": "LIVE REPLAY"
+    },
+    {
+      "id": "tOFABqhudbI",
+      "title": "minecraft server  #Gaming #live #viral #trending #tiktok #like #comment #sub #music #chill",
+      "description": "Archived livestream from Universal Gaming Network.",
+      "published": "",
+      "kind": "LIVE REPLAY"
+    },
+    {
+      "id": "-spylIP7Vdc",
+      "title": "minecraft server  #Gaming #live #viral #trending #tiktok #like #comment #sub #music #chill",
+      "description": "Archived livestream from Universal Gaming Network.",
+      "published": "",
+      "kind": "LIVE REPLAY"
+    },
+    {
+      "id": "b5XSjgLxxuM",
+      "title": "smp Server  #Gaming #live #viral #trending #tiktok #like #comment #sub #music #chill #java #bedrock",
+      "description": "Archived livestream from Universal Gaming Network.",
+      "published": "",
+      "kind": "LIVE REPLAY"
+    },
+    {
+      "id": "NVqVGm4Tb3w",
+      "title": "minecracf server  #Gaming #live #viral #trending #tiktok #like #comment #sub #music #chill",
+      "description": "Archived livestream from Universal Gaming Network.",
+      "published": "",
+      "kind": "LIVE REPLAY"
+    },
+    {
+      "id": "fuF8o8zVIfw",
+      "title": "Minecraft Server Universal  #Gaming #live #viral #trending #tiktok #like #comment #sub #music #chill",
+      "description": "Archived livestream from Universal Gaming Network.",
+      "published": "",
+      "kind": "LIVE REPLAY"
+    }
+  ]
 }
