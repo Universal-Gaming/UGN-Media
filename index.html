@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080a18">
+  <meta name="description" content="UGN Media — an interactive, cosmic, late-night desk filled with Universal Gaming Network videos.">
+  <meta property="og:title" content="UGN Media | The Galactic Video Archive">
+  <meta property="og:description" content="Pick a disc, fire up the CRT and explore the Universal Gaming video collection.">
+  <title>UGN Media — The Galactic Video Archive</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main id="app">
+    <div id="world" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <div id="intro" class="intro"><div class="boot-logo">U<span>G</span>N</div><div class="boot-bar"><i></i></div><p>INITIALIZING MEDIA ARCHIVE <span id="boot-percent">0%</span></p></div>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="UGN Media home"><span class="brand-mark">UGN<span class="star">✦</span></span><span class="brand-type"><strong>MEDIA</strong><small>UNIVERSAL GAMING NETWORK</small></span></a>
+      <div class="location-pill"><span class="blink-dot"></span> ARCHIVE <span class="slash">/</span> SECTOR 07 <span class="slash">/</span> <span id="time-label">02:13 AM</span></div>
+      <nav class="links" aria-label="External links">
+        <a href="https://universalgaming.us/" target="_blank" rel="noopener noreferrer">WEBSITE <span>↗</span></a>
+        <a href="https://discord.universalgaming.us/" target="_blank" rel="noopener noreferrer">DISCORD <span>↗</span></a>
+        <a href="https://www.youtube.com/@_UniversalGaming" target="_blank" rel="noopener noreferrer" class="youtube-link"><span class="yt-icon">▶</span> CHANNEL</a>
+      </nav>
+      <button class="icon-button top-menu" id="menu-toggle" type="button" aria-label="Open video library" title="Browse videos">☰</button>
+    </header>
+    <div class="left-rail" aria-hidden="true"><span>UGN MEDIA / INTERACTIVE ARCHIVE</span><div class="rail-line"></div><span>EST. IN THE UNIVERSE</span></div>
+    <section class="hero-copy" aria-label="Introduction">
+      <div class="eyebrow"><span class="sparkle">✧</span> YOUR VIDEOS. ANOTHER UNIVERSE.</div>
+      <h1>Stay a while.<br><em>Press play.</em></h1>
+      <p>A rainy night. An old computer. Your next adventure is somewhere in the stack.</p>
+      <button id="discover-button" type="button" class="text-button">EXPLORE THE COLLECTION <span>↗</span></button>
+    </section>
+    <div class="desk-tag" id="desk-tag" aria-hidden="true"><span>◉</span> ARCHIVE ONLINE <span class="small-spacer">—</span> <span id="disc-count">01</span> DISCS LOADED</div>
+    <div id="scene-hint" class="scene-hint" role="status" aria-live="polite">CLICK A DVD CASE TO EXPLORE</div>
+    <aside class="side-panel" id="library" aria-label="DVD library" aria-hidden="true">
+      <div class="panel-head"><div><span class="mini-label">UGN ARCHIVE / 001</span><h2>Disc library<span class="neon-dot">.</span></h2><p>Pick a video. Every disc is an adventure.</p></div><button class="icon-button" id="close-library" aria-label="Close library" type="button">✕</button></div>
+      <div class="library-tools"><input id="video-search" type="search" placeholder="SEARCH THE ARCHIVE..." aria-label="Search videos"><span id="library-count">0 DISCS</span></div>
+      <div class="library-filters" role="group" aria-label="DVD disc category">
+        <button type="button" class="filter-chip is-active" data-filter="all" aria-pressed="true">ALL <span id="filter-all-count">01</span></button>
+        <button type="button" class="filter-chip" data-filter="live" aria-pressed="false">● LIVE REPLAYS <span id="filter-live-count">00/10</span></button>
+        <button type="button" class="filter-chip" data-filter="video" aria-pressed="false">VIDEOS</button>
+      </div>
+      <div class="library-scroll" id="video-list"></div>
+      <div class="library-bottom"><button type="button" class="secondary-button" id="add-video">＋ ADD VIDEO LINK</button><a href="https://www.youtube.com/@_UniversalGaming/streams" target="_blank" rel="noopener noreferrer">VIEW YOUR YOUTUBE LIVE ARCHIVE ↗</a></div>
+    </aside>
+    <section class="case-overlay" id="case-overlay" aria-label="Selected DVD" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="case-title">
+      <div class="case-backdrop" data-close-case></div><div class="case-content"><button id="close-case" class="icon-button case-close" type="button" aria-label="Close disc">✕</button>
+        <div class="dvd-model"><div class="dvd-left"><span class="case-print">UNIVERSAL<br>GAMING<br>NETWORK</span><span class="case-mini">UGN MEDIA COLLECTION</span><div class="case-bands"></div></div><div class="dvd-right"><div class="dvd-disc" id="disc-visual"><div class="disc-inner"><span>UGN</span><small>MEDIA</small></div></div><span class="disc-serial">UGN // DISC <span id="disc-number">001</span></span></div></div>
+        <div class="case-info"><span class="mini-label">NOW SELECTED / <span id="case-type">VIDEO</span></span><h2 id="case-title">Welcome to the archive</h2><p id="case-description">Choose a disc and insert it into the UGN computer.</p><div class="case-metadata"><span id="case-date">UNIVERSAL GAMING</span><span>✦</span><span>OFFICIAL YOUTUBE</span></div><div class="case-actions"><button class="primary-button" id="insert-disc" type="button"><span>▶</span> INSERT &amp; PLAY</button><button class="secondary-button" id="case-back" type="button">BACK TO DESK</button></div></div>
+      </div>
+    </section>
+    <section class="screen-modal" id="screen-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="UGN CRT video player"><div class="screen-scrim" data-close-screen></div><div class="crt-shell"><div class="crt-top"><div class="crt-top-brand">UGN<span>✦</span> MEDIA SYSTEM / MODEL 1998</div><button class="icon-button screen-close" id="close-screen" type="button" aria-label="Close computer screen">✕</button></div><div class="crt-bezel"><div class="crt-inner"><div id="screen-standby" class="standby"><span class="standby-symbol">✦</span><strong>UGN<span>MEDIA</span></strong><small>GALACTIC VIDEO ARCHIVE</small><button type="button" id="standby-open" class="secondary-button">BROWSE DISCS ↗</button></div><iframe id="youtube-frame" title="Universal Gaming Network YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div></div><div class="crt-footer"><div><span class="power-led"></span> <span id="crt-video-title">UGN SYSTEM READY</span></div><div class="screen-footer-actions"><button id="open-youtube" type="button">YOUTUBE ↗</button><button id="screen-eject" type="button">⏏ EJECT</button><button id="screen-library" type="button">≡ LIBRARY</button></div></div></div></section>
+    <section class="add-modal" id="add-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="add-title"><div class="screen-scrim" data-close-add></div><form id="add-form" class="add-box"><div class="add-heading"><div><span class="mini-label">PERSONAL COLLECTION / THIS BROWSER ONLY</span><h2 id="add-title">Add a disc<span class="neon-dot">.</span></h2></div><button type="button" class="icon-button" id="close-add" aria-label="Close add video">✕</button></div><p>Paste a video or finished livestream replay from your YouTube channel. Personal discs stay on this browser. To share your 10 featured livestreams with everyone, run the sync workflow or edit <code>lives.json</code> in GitHub.</p><label for="video-url">YOUTUBE VIDEO URL</label><input id="video-url" required type="url" placeholder="https://www.youtube.com/watch?v=..."><label for="disc-kind">DISC TYPE</label><select id="disc-kind" required><option value="PERSONAL DISC">Regular video</option><option value="PERSONAL LIVE">Saved livestream replay</option></select><label for="video-title">DISC TITLE</label><input id="video-title" maxlength="110" required type="text" placeholder="The next UGN adventure"><p class="form-error" id="form-error" role="alert"></p><button class="primary-button" type="submit">＋ ADD TO LIBRARY</button></form></section>
+    <footer class="controls"><div class="footer-label"><span class="blink-dot"></span><span class="desktop-only">INTERACTIVE DESK EXPERIENCE</span><span class="mobile-only">UGN MEDIA</span><span class="version">V 1.1</span></div><div class="control-group"><button id="control-zoom" type="button" title="Zoom to CRT (Z)"><kbd>Z</kbd> SCREEN</button><button id="control-eject" type="button" title="Eject current disc (E)"><kbd>E</kbd> EJECT</button><button id="control-window" type="button" title="Raise blinds (W)"><kbd>W</kbd> WINDOW</button><button id="control-lamp" type="button" title="Toggle lamp (L)"><kbd>L</kbd> LAMP</button><button id="control-sound" type="button" title="Toggle synthesized ambient sound (S)"><kbd>S</kbd> SOUND <span id="sound-state">OFF</span></button><button id="control-power" type="button" title="Power computer on or off (P)"><kbd>P</kbd> POWER</button><button id="control-library" type="button" title="Browse discs"><kbd>≡</kbd> DISCS</button></div></footer>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="scene-fallback" class="scene-fallback" hidden><div class="fallback-window"><span>✦ &nbsp; UGN MEDIA</span><p>THE GALACTIC VIDEO ARCHIVE</p><button id="fallback-open" class="primary-button" type="button">OPEN DVD COLLECTION ↗</button></div></div>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
