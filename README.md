@@ -18,6 +18,13 @@ A complete, **static GitHub Pages site** based on an original interpretation of 
 
 **YouTube note:** YouTube embeds remain hosted and played by YouTube, with its native controls. The CRT animation moves into a full-screen overlay for playback because a WebGL canvas cannot legally or technically render arbitrary cross-origin YouTube video as a texture. Embeds may be blocked for a particular video, by browser privacy settings, or by network restrictions. Use the **YOUTUBE ↗** button as fallback. To see new videos on the DVDs, the scheduled RSS workflow must run successfully. YouTube's official RSS feed provides only the most recent uploads at a time; older uploads are preserved as the updater runs.
 
+
+## Lifetime DVD play counts (v1.2)
+
+The **Disc Library** displays a shared lifetime total and each DVD has its own play count (also shown when its case opens). **Only pressing INSERT & PLAY is counted**; opening the library, selecting a disc, refreshing, and navigating never increase counts. Counts begin when this feature goes live on November 18, 2026; historical YouTube views or earlier site usage cannot be recovered.
+
+This feature uses the public [CounterAPI.com](https://counterapi.com/) counter endpoint and its read-only aggregate support, keeping the GitHub Pages frontend static with no token or secret. It stores anonymous *play-click events*, not YouTube watch time or unique people. Counts are shared between users and survive GitHub Pages deployments while the external counter service retains the data. The unauthenticated public endpoint can be manipulated by automated requests and is not suitable for financial-grade analytics. If the service is unavailable, counts show a dash, and DVD playback remains operational. External requests disclose the visitor's IP to the counter provider in the ordinary course of the network request. The counter namespace is set in `metrics.js` and should remain unchanged if you move hosting domains.
+
 ## Controls
 
 | Action | Desktop | Mobile / touch |
