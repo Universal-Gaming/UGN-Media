@@ -21,3 +21,13 @@
 .library-empty{padding:24px 14px;color:#bec2df;font:10px/1.9 'Space Mono',monospace;letter-spacing:.025em;border:1px dashed rgba(169,171,241,.25)}
 .add-box select{width:100%;min-height:44px;border:1px solid rgba(158,160,215,.35);background:#0a0f24;color:white;padding:12px;font-size:13px;}
 @media(max-width:540px){.library-filters{padding-left:19px;padding-right:19px;gap:5px}.filter-chip{padding:8px 7px;font-size:8px}}
+
+/* Shared lifetime DVD play-count display */
+.lifetime-plays{display:flex;align-items:center;gap:16px;margin:2px 31px 18px;padding:15px 17px;border:1px solid rgba(111,219,247,.27);border-radius:7px;background:linear-gradient(110deg,rgba(47,38,99,.61),rgba(13,45,63,.57));box-shadow:inset 0 0 25px rgba(79,128,228,.05)}
+.lifetime-orb{font-size:23px;color:var(--cyan);text-shadow:0 0 15px rgba(99,236,255,.65)}
+.lifetime-plays>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.lifetime-plays strong{font:700 33px/1.1 'Space Grotesk',sans-serif;letter-spacing:-.04em;color:#f5f2ff;font-variant-numeric:tabular-nums}
+.lifetime-plays small{font:8px/1.5 'Space Mono',monospace;letter-spacing:.045em;color:#a6b3cb}
+.dvd-play-label{color:#79dde9!important;font-size:9px!important;letter-spacing:.08em!important}
+.case-plays{color:#91e9fb!important;font-weight:700}
+@media(max-width:480px){.lifetime-plays{margin:0 20px 12px;padding:11px 14px}.lifetime-plays strong{font-size:26px}.lifetime-plays small{font-size:7px}}
