@@ -4,13 +4,18 @@ on:
   workflow_dispatch:
     inputs:
       replay_links:
-        description: 'Optional archived livestream URLs (separate with spaces or newlines; optional URL | Title per line)'
+        description: 'Optional archived livestream URLs (one per line; optional URL | Title)'
         required: false
         type: string
       video_links:
         description: 'Optional regular YouTube URLs (one per line; optional URL | Title)'
         required: false
         type: string
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sync-youtube.yml'
+      - 'scripts/**'
   schedule:
     - cron: '17 7 * * *'
 
