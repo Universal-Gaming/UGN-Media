@@ -1,8 +1,10 @@
-/* UGN Media public DVD play counters.
-   Counts only explicit INSERT & PLAY actions, not page views or case browsing.
-   CounterAPI is a public third-party service; no secrets or personal IDs are sent.
+/* UGN Media public lifetime DVD play counters.
+   Read endpoints do not increment. Only INSERT & PLAY records events.
+   Public third-party API; no secrets or personal identifiers are transmitted by this script.
 */
-const API_BASE = 'https://counterapi.com/api/universal-gaming.github.io/ugn-media-dvd-play';
+const API_BASE = 'https://countapi.mileshilliard.com/api/v1';
+const PREFIX = 'ugn_media_dvd_20261118_';
+const keyFor = id => id === 'any' ? PREFIX + 'total' : PREFIX + 'disc_' + id;
 const numberFormatter = new Intl.NumberFormat('en-US');
 const validDiscId = id => id === 'uploads' || /^[A-Za-z0-9_-]{11}$/.test(id || '');
 
@@ -30,14 +32,27 @@ export class PlayMetrics {
   }
 
   async request(id, increment = false) {
-    const url = `${API_BASE}/${encodeURIComponent(id)}${increment ? '' : '?readOnly=true'}`;
-    const response = await fetch(url, {cache: 'no-store', referrerPolicy: 'no-referrer'});
-    if (!increment && response.status === 404) return 0;
-    if (!response.ok) throw new Error(`Counter service HTTP ${response.status}`);
-    const data = await response.json();
-    const n = Number(data?.value);
-    if (!Number.isSafeInteger(n) || n < 0) throw new Error('Unexpected play-count response');
-    return n;
+    const operation = increment ? 'hit' : 'get';
+    const url = `${API_BASE}/${operation}/${encodeURIComponent(keyFor(id))}`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 9000);
+    try {
+      const response = await fetch(url, {
+        cache: 'no-store',
+        referrerPolicy: 'no-referrer',
+        signal: controller.signal,
+        keepalive: increment
+      });
+      // Newly created collections have no keys yet; show zero instead of an error.
+      if (!increment && response.status === 404) return 0;
+      if (!response.ok) throw new Error(`Counter service HTTP ${response.status}`);
+      const data = await response.json();
+      const n = Number(data?.value);
+      if (!Number.isSafeInteger(n) || n < 0) throw new Error('Unexpected play-count response');
+      return n;
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
   paintTotal() {
@@ -137,16 +152,24 @@ export class PlayMetrics {
 
   async recordPlay(id) {
     if (!validDiscId(id)) return;
-    try {
-      const n = await this.request(id, true);
-      this.counts.set(id, n);
+    // Two stable public counters: one for this disc and one for the entire archive.
+    // Their increments are independent. Reading the menu or case never increments.
+    const [disc, total] = await Promise.allSettled([
+      this.request(id, true),
+      this.request('any', true)
+    ]);
+    if (disc.status === 'fulfilled') {
+      this.counts.set(id, disc.value);
       this.paintOne(id);
-      // Refresh the service-side aggregate; never count by opening the menu.
-      this.totalFetchedAt = 0;
-      if (this.totalPending) await this.totalPending;
-      await this.loadTotal(true);
-    } catch (error) {
-      console.info('UGN Media play-count service unavailable:', error.message);
+    } else {
+      console.warn('UGN Media per-disc play count unavailable:', disc.reason);
+    }
+    if (total.status === 'fulfilled') {
+      this.total = total.value;
+      this.totalFetchedAt = Date.now();
+      this.paintTotal();
+    } else {
+      console.warn('UGN Media total play count unavailable:', total.reason);
     }
   }
 }
