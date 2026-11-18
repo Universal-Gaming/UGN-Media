@@ -1,4 +1,5 @@
-/* UGN Media — static GitHub Pages application. No API keys or backend required. */
+/* UGN Media — static GitHub Pages application with public aggregate play metrics. */
+import {PlayMetrics} from './metrics.js';
 const CHANNEL = 'https://www.youtube.com/@_UniversalGaming';
 const CHANNEL_ID = 'UCSZKqTk0dxDgN_krIsSa16Q';
 const UPLOADS_ID = 'UU' + CHANNEL_ID.slice(2);
@@ -11,6 +12,8 @@ const safeText = value => String(value ?? '').slice(0,500);
 const isRealId = id => /^[\w-]{11}$/.test(id || '');
 const isLive = v => ['LIVE REPLAY','PERSONAL LIVE'].includes(v?.kind);
 const MAX_LIVES = 10;
+const playMetrics = new PlayMetrics();
+let insertingDisc = false;
 const safeStorage = {get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -50,7 +53,7 @@ function renderLibrary(){
   const filtered=state.videos.map((v,index)=>({...v,index})).filter(v=>
     (state.filter==='all'||(state.filter==='live'&&isLive(v))||(state.filter==='video'&&!isLive(v)))&&
     (v.title.toLowerCase().includes(q)||v.kind.toLowerCase().includes(q)));
-  const list=$('video-list');list.replaceChildren();
+  const list=$('video-list');list.replaceChildren();playMetrics.startRows();
   $('library-count').textContent=`${filtered.length} DISCS`;
   if(!filtered.length){
     const p=document.createElement('p');p.className='library-empty';
@@ -66,7 +69,8 @@ function renderLibrary(){
     const meta=document.createElement('div');meta.className='video-row-body';
     const strong=document.createElement('strong');strong.textContent=v.title;
     const caption=document.createElement('span');caption.textContent=(isLive(v)?'● LIVE REPLAY  ·  ':'')+publishedLabel(v);
-    meta.append(strong,caption);
+    const playsLabel=document.createElement('span');playsLabel.className='dvd-play-label';
+    meta.append(strong,caption,playsLabel);playMetrics.addRow(v.id,playsLabel);
     const arrow=document.createElement('span');arrow.className='row-arrow';arrow.textContent='↗';
     button.append(thumb,meta,arrow);button.addEventListener('click',()=>chooseVideo(v.index));list.append(button);
   }
@@ -77,15 +81,18 @@ function setLibraryFilter(value){
   document.querySelectorAll('.filter-chip').forEach(button=>{const active=button.dataset.filter===value;button.classList.toggle('is-active',active);button.setAttribute('aria-pressed',String(active))});
   renderLibrary();
 }
-function openLibrary(open=true){if(open){closeCase(false);closeScreen(false);closeAdd(false)}state.library=open;setAria('library',open);if(open){renderLibrary();$('video-search').focus()}state.scene?.setLibraryOpen(open)}
+function openLibrary(open=true){if(open){closeCase(false);closeScreen(false);closeAdd(false)}state.library=open;setAria('library',open);if(open){renderLibrary();void playMetrics.loadTotal();$('video-search').focus()}state.scene?.setLibraryOpen(open)}
 function chooseVideo(index){const v=state.videos[index];if(!v)return;if(!state.power){toast('POWER ON THE COMPUTER FIRST (P)');return;}openLibrary(false);closeScreen(false);state.current=v;state.caseOpen=true;
   $('case-title').textContent=v.title;$('case-description').textContent=v.description||'Official Universal Gaming video.';$('case-date').textContent=publishedLabel(v);$('case-type').textContent=v.kind||'YOUTUBE VIDEO';$('disc-number').textContent=String(index+1).padStart(3,'0');
+  playMetrics.select(v.id);
   setAria('case-overlay',true);state.scene?.selectDisc(index);setTimeout(()=>$('insert-disc').focus(),180);tone(490,.055,'sine',.04);$('scene-hint').style.opacity='0';
 }
 function closeCase(restore=true){if(!state.caseOpen)return;state.caseOpen=false;setAria('case-overlay',false);state.scene?.unselectDisc();if(restore)$('discover-button')?.focus()}
 function insert(){
-  if(!state.current||!state.power)return;
+  if(!state.current||!state.power||insertingDisc)return;
+  insertingDisc=true;
   const v=state.current;
+  void playMetrics.recordPlay(v.id);
   // Fly the printed disc into the drive while the physical case moves in 3D.
   if(!reduceMotion){
     const source=$('disc-visual'),r=source.getBoundingClientRect(),root=$('app').getBoundingClientRect();
@@ -96,7 +103,7 @@ function insert(){
     const anim=flying.animate([{transform:'translate(0,0) scale(1) rotate(0deg)',opacity:1},{transform:`translate(${dx}px,${dy}px) scale(.12) rotate(900deg)`,opacity:0}],{duration:680,easing:'cubic-bezier(.36,.02,.84,.41)',fill:'forwards'});
     anim.finished.finally(()=>flying.remove()).catch(()=>flying.remove());
   }
-  closeCase(false);state.scene?.insertDisc();setTimeout(()=>openScreen(v),reduceMotion?50:700);
+  closeCase(false);state.scene?.insertDisc();setTimeout(()=>{insertingDisc=false;openScreen(v)},reduceMotion?50:700);
 }
 function videoUrl(v){if(isRealId(v?.id))return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?rel=0&playsinline=1`;return `https://www.youtube-nocookie.com/embed/videoseries?list=${encodeURIComponent(v?.playlistId||UPLOADS_ID)}&playsinline=1`}
 function directUrl(v){return isRealId(v?.id)?`https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}`:CHANNEL+'/videos'}
