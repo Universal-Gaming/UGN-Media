@@ -1,0 +1,29 @@
+name: Diagnose UGN Media Public Counter API
+on:
+  push:
+    paths:
+      - '.github/workflows/diagnose-counter.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Probe read-only counters from GitHub runner (no increments)
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import urllib.request, urllib.error, json
+          root = "https://counterapi.com/api/universal-gaming.github.io/ugn-media-dvd-play"
+          for key in ("any", "uploads", "Z56cSjpMo2s"):
+            url = f"{root}/{key}?readOnly=true"
+            req = urllib.request.Request(url, headers={"Origin": "https://universal-gaming.github.io", "User-Agent":"UGN-Media-Diagnostics/1.0"})
+            try:
+              with urllib.request.urlopen(req, timeout=10) as res:
+                body=res.read(800).decode("utf-8","replace")
+                print(json.dumps({"key":key,"status":res.status,"content_type":res.headers.get("Content-Type"),"cors":res.headers.get("Access-Control-Allow-Origin"),"body":body}))
+            except Exception as e:
+              print(json.dumps({"key":key,"error":str(e)}))
+          PY
