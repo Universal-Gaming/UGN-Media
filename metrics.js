@@ -66,7 +66,7 @@ export class PlayMetrics {
     if (this.totalPending) return this.totalPending;
     if (!force && this.totalFetchedAt && Date.now() - this.totalFetchedAt < 30000) return Promise.resolve(this.total);
     this.totalPending = this.request('any').then(n => {
-      this.total = n;
+      this.total = Math.max(this.total ?? 0, n);
       this.totalFetchedAt = Date.now();
       this.paintTotal();
       return n;
@@ -125,7 +125,7 @@ export class PlayMetrics {
     if (!validDiscId(id)) return Promise.resolve(null);
     if (this.pending.has(id)) return this.pending.get(id);
     const work = this.request(id).then(n => {
-      this.counts.set(id, n);
+      this.counts.set(id, Math.max(this.counts.get(id) ?? 0, n));
       this.paintOne(id);
       return n;
     }).catch(error => {
@@ -159,13 +159,13 @@ export class PlayMetrics {
       this.request('any', true)
     ]);
     if (disc.status === 'fulfilled') {
-      this.counts.set(id, disc.value);
+      this.counts.set(id, Math.max(this.counts.get(id) ?? 0, disc.value));
       this.paintOne(id);
     } else {
       console.warn('UGN Media per-disc play count unavailable:', disc.reason);
     }
     if (total.status === 'fulfilled') {
-      this.total = total.value;
+      this.total = Math.max(this.total ?? 0, total.value);
       this.totalFetchedAt = Date.now();
       this.paintTotal();
     } else {
